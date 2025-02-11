@@ -8,26 +8,55 @@ function ProductList() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("all");
 
   useEffect(() => {
+    fetch("https://fakestoreapi.com/products/categories")
+      .then((res) => res.json())
+      .then((data) => setCategories(["all", ...data]));
+
     fetch("https://fakestoreapi.com/products")
       .then((res) => res.json())
       .then((data) => setProducts(data));
   }, []);
 
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+  };
+
+  const filteredProducts =
+    selectedCategory === "all"
+      ? products
+      : products.filter((product) => product.category === selectedCategory);
+
   const handleAddToCart = (product) => {
     dispatch(addItem(product));
-    // navigate("/cart");
   };
 
   return (
-    <div className="text-center ">
+    <div className="">
       <div className="mb-8">
         <Navbar msg="Product" />
       </div>
 
+      <div className="mb-6 ml-8">
+        <p className="font-semibold"> Select Category</p>
+        <select
+          className="px-4 py-2 border rounded-md"
+          value={selectedCategory}
+          onChange={(e) => handleCategoryChange(e.target.value)}
+        >
+          {categories.map((category) => (
+            <option key={category} value={category}>
+              {category.toUpperCase()}
+            </option>
+          ))}
+        </select>
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {products.map((product) => (
+        {filteredProducts.map((product) => (
           <div
             key={product.id}
             className="border p-4 rounded-lg shadow-md hover:shadow-lg transition"
@@ -51,4 +80,5 @@ function ProductList() {
     </div>
   );
 }
+
 export default ProductList;
