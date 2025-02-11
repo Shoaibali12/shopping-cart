@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { addItem } from "../store/cartSlice";
+import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
+
 function ProductList() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
@@ -11,8 +15,17 @@ function ProductList() {
       .then((data) => setProducts(data));
   }, []);
 
+  const handleAddToCart = (product) => {
+    dispatch(addItem(product));
+    // navigate("/cart");
+  };
+
   return (
-    <div className="text-center">
+    <div className="text-center ">
+      <div className="mb-8">
+        <Navbar msg="Product" />
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {products.map((product) => (
           <div
@@ -28,7 +41,7 @@ function ProductList() {
             <span className="block text-lg font-bold">${product.price}</span>
             <button
               className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-              onClick={() => dispatch(addItem(product))}
+              onClick={() => handleAddToCart(product)}
             >
               Add to Cart
             </button>
