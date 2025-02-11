@@ -9,6 +9,18 @@ function Cart() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  // Calculate total bill
+  const totalBill = cart.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
+
+  // Handle purchase
+  const handlePurchase = () => {
+    cart.forEach((item) => dispatch(removeItem(item)));
+    alert("Purchase successful! Your cart is now empty.");
+  };
+
   return (
     <div className="text-center w-full flex flex-col justify-center items-center ">
       <div className="mb-8 w-full">
@@ -54,6 +66,19 @@ function Cart() {
           ))
         )}
       </div>
+      {cart.length > 0 && (
+        <>
+          <div className="mt-4 text-xl font-semibold">
+            Total Bill: ${totalBill.toFixed(2)}
+          </div>
+          <button
+            className="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+            onClick={handlePurchase}
+          >
+            Buy
+          </button>
+        </>
+      )}
       <button
         className="mt-8 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
         onClick={() => navigate("/")}

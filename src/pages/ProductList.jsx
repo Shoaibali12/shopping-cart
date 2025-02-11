@@ -37,7 +37,7 @@ function ProductList() {
   return (
     <div className="">
       <div className="mb-8">
-        <Navbar msg="Product" />
+        <Navbar msg="Product List" />
       </div>
 
       <div className="mb-6 ml-8">
