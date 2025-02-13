@@ -21,8 +21,15 @@ const Signin = () => {
         "http://localhost:5000/api/auth/signin",
         formData
       );
-      if (response.status === 200) {
+
+      console.log("API Response:", response.data); // Debugging
+
+      if (response.data.user) {
+        localStorage.setItem("user", JSON.stringify(response.data.user)); // Store user details
+        localStorage.setItem("token", response.data.token); // Store JWT token
         navigate("/");
+      } else {
+        setError("Invalid response from server");
       }
     } catch (err) {
       setError(err.response?.data?.message || "Invalid credentials");

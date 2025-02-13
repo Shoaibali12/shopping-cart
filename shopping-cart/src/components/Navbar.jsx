@@ -1,9 +1,27 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { FiShoppingCart, FiLogOut } from "react-icons/fi";
+import { ShoppingCart, LogOut, User } from "lucide-react";
 
 function Navbar({ msg }) {
   const cart = useSelector((state) => state.cart);
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    setUser(null);
+    navigate("/signin");
+  };
 
   return (
     <div className="w-full h-16 bg-gray-800 text-white flex justify-between items-center px-8 shadow-lg">
@@ -13,14 +31,32 @@ function Navbar({ msg }) {
 
       <p className="text-lg font-semibold">{msg}</p>
 
-      <Link to="/cart" className="relative">
-        <p className="font-semibold">Cart</p>
-        {cart.length > 0 && (
-          <span className="absolute -top-2 -right-3 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-            {cart.length}
-          </span>
+      <div className="flex items-center gap-6">
+        {/* Cart Icon with Count */}
+        <Link to="/cart" className="relative flex items-center">
+          <FiShoppingCart size={24} />
+          {cart.length > 0 && (
+            <span className="absolute -top-2 -right-3 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+              {cart.length}
+            </span>
+          )}
+        </Link>
+
+        {/* User Profile Section */}
+        {user ? (
+          <div className="flex items-center gap-4">
+            <p className="font-semibold">{user.name}</p>
+            <User size={24} />
+            <button onClick={handleLogout} className="text-white">
+              <LogOut size={24} />
+            </button>
+          </div>
+        ) : (
+          <Link to="/signin" className="bg-blue-500 px-3 py-1 rounded-lg">
+            Sign In
+          </Link>
         )}
-      </Link>
+      </div>
     </div>
   );
 }
