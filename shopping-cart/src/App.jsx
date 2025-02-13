@@ -6,14 +6,25 @@ import Cart from "./pages/Cart";
 import ProductList from "./pages/ProductList";
 import Signup from "./pages/Signup";
 import Signin from "./pages/Signin";
+// import AddProduct from "./pages/AddProduct";
 
-// Private Route Component
+// Private Route for Authenticated Users
 const PrivateRoute = ({ element }) => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   return isAuthenticated ? element : <Navigate to="/signin" replace />;
 };
 
-// Public Route Component (prevents logged-in users from accessing signin/signup)
+// Seller-Only Route
+const SellerRoute = ({ element }) => {
+  const { isAuthenticated, role } = useSelector((state) => state.auth);
+  return isAuthenticated && role === "seller" ? (
+    element
+  ) : (
+    <Navigate to="/" replace />
+  );
+};
+
+// Public Route (Prevents logged-in users from accessing signin/signup)
 const PublicRoute = ({ element }) => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   return isAuthenticated ? <Navigate to="/" replace /> : element;
@@ -46,7 +57,11 @@ function App() {
             element={<PrivateRoute element={<Cart msg="Cart Items" />} />}
           />
 
-          {/* Redirect unknown routes to home */}
+          {/* <Route
+            path="/add-product"
+            element={<SellerRoute element={<AddProduct />} />}
+          /> */}
+
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </BrowserRouter>

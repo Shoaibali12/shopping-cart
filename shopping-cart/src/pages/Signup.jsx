@@ -7,6 +7,7 @@ const Signup = () => {
     name: "",
     email: "",
     password: "",
+    role: "buyer",
   });
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -71,6 +72,21 @@ const Signup = () => {
               required
             />
           </div>
+          {/* Role Selection */}
+          <div className="mb-4">
+            <label className="block text-gray-700">Role</label>
+            <select
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              className="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
+              required
+            >
+              <option value="buyer">Buyer</option>
+              <option value="seller">Seller</option>
+            </select>
+          </div>
+
           <button
             type="submit"
             className="w-full bg-orange-500 text-white py-2 px-4 rounded-lg hover:bg-orange-600 transition duration-300"

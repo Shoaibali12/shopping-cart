@@ -33,10 +33,14 @@ const Signin = () => {
         localStorage.setItem("token", response.data.token);
 
         // Dispatch login action to update Redux state
-        dispatch(login());
+        dispatch(login(response.data.user));
 
-        // Redirect user after successful login
-        navigate("/");
+        // Redirect based on user role
+        if (response.data.user.role === "seller") {
+          navigate("/seller-dashboard");
+        } else {
+          navigate("/");
+        }
       } else {
         setError("Invalid response from server");
       }
