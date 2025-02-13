@@ -4,6 +4,7 @@ import store from "./store/store";
 import Cart from "./pages/Cart";
 import ProductList from "./pages/ProductList";
 import Navbar from "./components/Navbar";
+import Signup from "./pages/Signup";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
         <Routes>
           <Route path="/" element={<ProductList msg="Product List" />} />
           <Route path="/cart" element={<Cart msg="Cart Items" />} />
+          <Route path="/signup" element={<Signup />} />
         </Routes>
       </Provider>
     </BrowserRouter>
