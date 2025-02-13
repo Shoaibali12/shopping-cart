@@ -1,25 +1,56 @@
 import React from "react";
-import { Provider } from "react-redux";
+import { Provider, useSelector } from "react-redux";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import store from "./store/store";
 import Cart from "./pages/Cart";
 import ProductList from "./pages/ProductList";
-import Navbar from "./components/Navbar";
 import Signup from "./pages/Signup";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Signin from "./pages/Signin";
+
+// Private Route Component
+const PrivateRoute = ({ element }) => {
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  return isAuthenticated ? element : <Navigate to="/signin" replace />;
+};
+
+// Public Route Component (prevents logged-in users from accessing signin/signup)
+const PublicRoute = ({ element }) => {
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  return isAuthenticated ? <Navigate to="/" replace /> : element;
+};
 
 function App() {
   return (
-    <BrowserRouter>
-      <Provider store={store}>
+    <Provider store={store}>
+      <BrowserRouter>
         <Routes>
-          <Route path="/" element={<ProductList msg="Product List" />} />
-          <Route path="/cart" element={<Cart msg="Cart Items" />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/signin" element={<Signin />} />
+          {/* Public Routes */}
+          <Route
+            path="/signup"
+            element={<PublicRoute element={<Signup />} />}
+          />
+          <Route
+            path="/signin"
+            element={<PublicRoute element={<Signin />} />}
+          />
+
+          {/* Private Routes */}
+          <Route
+            path="/"
+            element={
+              <PrivateRoute element={<ProductList msg="Product List" />} />
+            }
+          />
+          <Route
+            path="/cart"
+            element={<PrivateRoute element={<Cart msg="Cart Items" />} />}
+          />
+
+          {/* Redirect unknown routes to home */}
+          <Route path="*" element={<Navigate to="/" />} />
         </Routes>
-      </Provider>
-    </BrowserRouter>
+      </BrowserRouter>
+    </Provider>
   );
 }
 

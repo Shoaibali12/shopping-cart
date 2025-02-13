@@ -1,8 +1,11 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { login } from "../store/authSlice";
 
 const Signin = () => {
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -24,9 +27,15 @@ const Signin = () => {
 
       console.log("API Response:", response.data); // Debugging
 
-      if (response.data.user) {
-        localStorage.setItem("user", JSON.stringify(response.data.user)); // Store user details
-        localStorage.setItem("token", response.data.token); // Store JWT token
+      if (response.data.user && response.data.token) {
+        // Store user details & token in localStorage
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+        localStorage.setItem("token", response.data.token);
+
+        // Dispatch login action to update Redux state
+        dispatch(login());
+
+        // Redirect user after successful login
         navigate("/");
       } else {
         setError("Invalid response from server");

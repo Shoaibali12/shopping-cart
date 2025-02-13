@@ -3,8 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { FiShoppingCart, FiLogOut } from "react-icons/fi";
 import { ShoppingCart, LogOut, User } from "lucide-react";
+import { logout } from "../store/authSlice";
+import { useDispatch } from "react-redux";
 
 function Navbar({ msg }) {
+  const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart);
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -17,10 +20,8 @@ function Navbar({ msg }) {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    setUser(null);
-    navigate("/signin");
+    dispatch(logout());
+    navigate("/signin", { replace: true });
   };
 
   return (
@@ -42,7 +43,6 @@ function Navbar({ msg }) {
           )}
         </Link>
 
-        {/* User Profile Section */}
         {user ? (
           <div className="flex items-center gap-4">
             <p className="font-semibold">{user.name}</p>

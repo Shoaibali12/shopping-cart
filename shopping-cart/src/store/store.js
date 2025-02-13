@@ -1,34 +1,35 @@
 import { configureStore } from "@reduxjs/toolkit";
 import cartReducer from "./cartSlice";
+import authReducer from "./authSlice";
 
-const loadState = () => {
+const loadCartState = () => {
   try {
-    const serializedState = localStorage.getItem("cart");
-    return serializedState ? JSON.parse(serializedState) : [];
+    const cartState = localStorage.getItem("cart");
+    return cartState ? JSON.parse(cartState) : [];
   } catch (err) {
-    console.error("Could not load state", err);
+    console.error("Could not load cart state", err);
     return [];
   }
 };
 
-const saveState = (state) => {
+const saveCartState = (state) => {
   try {
-    const serializedState = JSON.stringify(state);
-    localStorage.setItem("cart", serializedState);
+    localStorage.setItem("cart", JSON.stringify(state));
   } catch (err) {
-    console.error("Could not save state", err);
+    console.error("Could not save cart state", err);
   }
 };
 
 const store = configureStore({
   reducer: {
     cart: cartReducer,
+    auth: authReducer,
   },
-  preloadedState: { cart: loadState() },
+  preloadedState: { cart: loadCartState(), auth: { isAuthenticated: false } },
 });
 
 store.subscribe(() => {
-  saveState(store.getState().cart);
+  saveCartState(store.getState().cart);
 });
 
 export default store;
