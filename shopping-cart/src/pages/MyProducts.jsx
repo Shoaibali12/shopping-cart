@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Navbar from "../components/Navbar";
 
 const MyProducts = () => {
   const [products, setProducts] = useState([]);
@@ -40,34 +41,36 @@ const MyProducts = () => {
   }, [navigate]);
 
   return (
-    <div className="container mx-auto mt-8 p-4">
-      <h2 className="text-2xl font-bold text-center text-purple-700">
-        📦 My Products
-      </h2>
+    <div>
+      <Navbar msg="📦 My Products" />
+      <div className="container mx-auto mt-8 p-4">
+        {loading && <p className="text-center text-gray-600">Loading...</p>}
+        {error && <p className="text-center text-red-500">{error}</p>}
 
-      {loading && <p className="text-center text-gray-600">Loading...</p>}
-      {error && <p className="text-center text-red-500">{error}</p>}
+        {products.length === 0 && !loading && !error && (
+          <p className="text-center text-gray-500">No products found.</p>
+        )}
 
-      {products.length === 0 && !loading && !error && (
-        <p className="text-center text-gray-500">No products found.</p>
-      )}
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-        {products.map((product) => (
-          <div key={product._id} className="border rounded-lg p-4 shadow-md">
-            <img
-              src={`http://localhost:5000/uploads/${product.image}`}
-              alt={product.title}
-              className="w-full h-40 object-cover rounded-md"
-            />
-            <h3 className="text-lg font-semibold mt-2">{product.title}</h3>
-            <p className="text-gray-600">${product.price}</p>
-            <p className="text-sm text-gray-500">{product.description}</p>
-            <p className="text-xs text-gray-400">
-              Category: {product.category}
-            </p>
-          </div>
-        ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {products.map((product) => (
+            <div
+              key={product._id}
+              className="border p-4 rounded-lg shadow-md hover:shadow-lg transition"
+            >
+              <img
+                src={`http://localhost:5000/uploads/${product.image}`}
+                alt={product.title}
+                className="w-32 h-32 mx-auto mb-2 object-contain  "
+              />
+              <h3 className="text-lg font-semibold mt-2">{product.title}</h3>
+              <p className="text-gray-600">${product.price}</p>
+              <p className="text-sm text-gray-500">{product.description}</p>
+              <p className="text-xs text-gray-400">
+                Category: {product.category}
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
