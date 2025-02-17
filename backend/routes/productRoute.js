@@ -78,4 +78,43 @@ router.get("/my-products", authMiddleware, async (req, res) => {
   }
 });
 
+// ✅ DELETE a product (Only Owner Can Delete)
+router.delete("/delete/:id", authMiddleware, async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const userId = req.user.userId; // ✅ Extract user ID from token
+
+    // ✅ Find the product
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // ✅ Check if the logged-in user is the owner
+    if (product.userId.toString() !== userId) {
+      return res.status(403).json({
+        message: "Unauthorized: You can only delete your own product",
+      });
+    }
+
+    // ✅ Delete product
+    await Product.findByIdAndDelete(productId);
+    res.status(200).json({ message: "Product deleted successfully" });
+  } catch (error) {
+    console.error("🚨 Error deleting product:", error);
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+});
+
+// Get All products
+router.get("/all", async (req, res) => {
+  try {
+    const products = await Product.find().sort({ createdAt: -1 });
+    res.status(200).json(products);
+  } catch (error) {
+    console.error("🚨 Error fetching all products:", error);
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+});
 module.exports = router;

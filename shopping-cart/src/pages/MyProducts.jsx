@@ -40,6 +40,29 @@ const MyProducts = () => {
     fetchMyProducts();
   }, [navigate]);
 
+  const handleDelete = async (productId) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this product?"
+    );
+    if (!confirmDelete) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(
+        `http://localhost:5000/api/products/delete/${productId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      setProducts(products.filter((product) => product._id !== productId));
+      alert("✅ Product deleted successfully!");
+    } catch (err) {
+      console.error("🚨 Error deleting product:", err.response?.data || err);
+      setError(err.response?.data?.message || "Failed to delete product.");
+    }
+  };
+
   return (
     <div>
       <Navbar msg="📦 My Products" />
@@ -60,14 +83,23 @@ const MyProducts = () => {
               <img
                 src={`http://localhost:5000/uploads/${product.image}`}
                 alt={product.title}
-                className="w-32 h-32 mx-auto mb-2 object-contain  "
+                className="w-36 h-36 mx-auto  object-contain"
               />
-              <h3 className="text-lg font-semibold mt-2">{product.title}</h3>
-              <p className="text-gray-600">${product.price}</p>
-              <p className="text-sm text-gray-500">{product.description}</p>
-              <p className="text-xs text-gray-400">
-                Category: {product.category}
+              <h3 className="text-lg font-semibold mt-2 text-center">
+                {product.title}
+              </h3>
+              <p className="text-gray-600 text-center">${product.price}</p>
+              <p className="text-sm text-gray-500 text-center">
+                {product.description}
               </p>
+
+              {/* Delete Button */}
+              <button
+                onClick={() => handleDelete(product._id)}
+                className="mt-3 bg-red-700 text-white px-3 py-1 rounded-lg hover:bg-red-600 transition w-full"
+              >
+                🗑️ Delete
+              </button>
             </div>
           ))}
         </div>
