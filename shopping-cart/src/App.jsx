@@ -7,6 +7,7 @@ import ProductList from "./pages/ProductList";
 import Signup from "./pages/Signup";
 import Signin from "./pages/Signin";
 import AddProduct from "./pages/AddProduct";
+import MyProducts from "./pages/MyProducts";
 
 const PrivateRoute = ({ element }) => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
@@ -57,6 +58,10 @@ function App() {
           <Route
             path="/add-product"
             element={<SellerRoute element={<AddProduct />} />}
+          />
+          <Route
+            path="/my-products"
+            element={<SellerRoute element={<MyProducts />} />}
           />
 
           <Route path="*" element={<Navigate to="/" />} />
