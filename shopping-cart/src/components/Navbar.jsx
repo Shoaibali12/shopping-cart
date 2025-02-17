@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { FiShoppingCart } from "react-icons/fi";
-import { LogOut, User, PlusCircle } from "lucide-react";
+import { LogOut, User, PlusCircle, List } from "lucide-react"; // Added List icon
 import { logout } from "../store/authSlice";
 
 function Navbar({ msg }) {
@@ -46,6 +46,16 @@ function Navbar({ msg }) {
             className="flex items-center gap-2 bg-green-600 px-3 py-1 rounded-lg hover:bg-green-700 transition"
           >
             <PlusCircle size={20} /> <span>Add Product</span>
+          </Link>
+        )}
+
+        {/* Show "My Products" Button for Sellers Only */}
+        {isAuthenticated && role === "seller" && (
+          <Link
+            to="/my-products"
+            className="flex items-center gap-2 bg-yellow-500 px-3 py-1 rounded-lg hover:bg-yellow-600 transition"
+          >
+            <List /> <span>My Products</span>
           </Link>
         )}
 

@@ -24,6 +24,15 @@ const AddProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (
+      !formData.title ||
+      !formData.price ||
+      !formData.description ||
+      !formData.category
+    ) {
+      return setError("All fields are required.");
+    }
     if (!formData.image) return setError("Please upload an image");
 
     const formDataToSend = new FormData();
@@ -36,12 +45,28 @@ const AddProduct = () => {
     try {
       setLoading(true);
       setError(null);
+
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        setError("Authentication required. Please log in.");
+        return;
+      }
+
+      const headers = {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+      };
+
+      console.log("🛠️ Sending Request Headers:", headers); // Debugging
+
       const response = await axios.post(
         "http://localhost:5000/api/products/add",
         formDataToSend,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        { headers }
       );
-      alert("Product added successfully!");
+
+      alert("✅ Product added successfully!");
       setFormData({
         title: "",
         price: "",
@@ -49,7 +74,10 @@ const AddProduct = () => {
         category: "",
         image: null,
       });
+
+      document.getElementById("imageInput").value = "";
     } catch (err) {
+      console.error("🚨 Error adding product:", err.response?.data || err);
       setError(err.response?.data?.message || "Error adding product");
     } finally {
       setLoading(false);
@@ -124,6 +152,7 @@ const AddProduct = () => {
             <label className="block text-gray-700">Product Image</label>
             <input
               type="file"
+              id="imageInput"
               onChange={handleFileChange}
               className="w-full border px-4 py-2 rounded-lg focus:ring-2 focus:ring-purple-400"
               accept="image/*"
