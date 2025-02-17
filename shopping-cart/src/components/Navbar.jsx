@@ -1,16 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { FiShoppingCart } from "react-icons/fi";
-import { LogOut, User, PlusCircle, List } from "lucide-react"; // Added List icon
+import { LogOut, User, PlusCircle, List } from "lucide-react";
 import { logout } from "../store/authSlice";
 
 function Navbar({ msg }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [showDropdown, setShowDropdown] = useState(false);
 
   // Get user authentication and role from Redux
-  const { isAuthenticated, role } = useSelector((state) => state.auth);
+  const { isAuthenticated, user, role } = useSelector((state) => state.auth);
   const cart = useSelector((state) => state.cart);
 
   const handleLogout = () => {
@@ -55,18 +56,42 @@ function Navbar({ msg }) {
             to="/my-products"
             className="flex items-center gap-2 bg-yellow-500 px-3 py-1 rounded-lg hover:bg-yellow-600 transition"
           >
-            <List /> <span>My Products</span>
+            <List size={20} /> <span>My Products</span>
           </Link>
         )}
 
-        {/* Show User Info and Logout Button */}
+        {/* User Dropdown */}
         {isAuthenticated ? (
-          <div className="flex items-center gap-4">
-            <p className="font-semibold capitalize">{role}</p>
-            <User size={24} />
-            <button onClick={handleLogout} className="text-white">
-              <LogOut size={24} />
+          <div className="relative flex items-center gap-2">
+            {/* ✅ Role displayed as text before the icon */}
+            <span className="text-sm font-medium">
+              {role === "seller" ? "Seller" : "Buyer"}
+            </span>
+
+            {/* ✅ User Icon at the end */}
+            <button
+              onClick={() => setShowDropdown(!showDropdown)}
+              className="focus:outline-none"
+            >
+              <User size={24} />
             </button>
+
+            {showDropdown && (
+              <div className="absolute -left-16 right-0 mt-40 w-36 bg-white text-gray-800 rounded-md shadow-lg py-2">
+                <p className="px-4 py-2 font-semibold border-b">
+                  {user?.name || "User"}
+                </p>
+                <p className="px-4 py-2 text-xs text-gray-600">
+                  {role?.toUpperCase()}
+                </p>
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-200"
+                >
+                  <LogOut size={20} className="inline-block mr-2" /> Logout
+                </button>
+              </div>
+            )}
           </div>
         ) : (
           <Link

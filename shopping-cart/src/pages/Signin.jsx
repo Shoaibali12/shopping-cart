@@ -28,15 +28,17 @@ const Signin = () => {
       console.log("API Response:", response.data); // Debugging
 
       if (response.data.user && response.data.token) {
+        const { user, token } = response.data;
+
         // Store user details & token in localStorage
-        localStorage.setItem("user", JSON.stringify(response.data.user));
-        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("token", token);
 
         // Dispatch login action to update Redux state
-        dispatch(login(response.data.user));
+        dispatch(login({ user, role: user.role, token }));
 
         // Redirect based on user role
-        if (response.data.user.role === "seller") {
+        if (user.role === "seller") {
           navigate("/seller-dashboard");
         } else {
           navigate("/");

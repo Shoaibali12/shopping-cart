@@ -11,6 +11,13 @@ function ProductList() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [user, setUser] = useState(null); // Store logged-in user
+
+  useEffect(() => {
+    // Fetch user from localStorage or authentication state
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    setUser(storedUser);
+  }, []);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -20,7 +27,7 @@ function ProductList() {
         );
         setProducts(response.data);
 
-        // Extract unique categories from real products
+        // Extract unique categories
         const uniqueCategories = [
           "all",
           ...new Set(response.data.map((product) => product.category)),
@@ -84,7 +91,7 @@ function ProductList() {
         {filteredProducts.map((product) => (
           <div
             key={product._id}
-            className="border p-4 rounded-lg shadow-md hover:shadow-lg transition"
+            className="border p-4 rounded-lg shadow-md hover:shadow-lg transition flex flex-col justify-center items-center"
           >
             <img
               src={`http://localhost:5000/uploads/${product.image}`}
@@ -93,12 +100,15 @@ function ProductList() {
             />
             <span className="block font-medium">{product.title}</span>
             <span className="block text-lg font-bold">${product.price}</span>
-            <button
-              className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-              onClick={() => handleAddToCart(product)}
-            >
-              Add to Cart
-            </button>
+
+            {user?.role === "buyer" && (
+              <button
+                className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                onClick={() => handleAddToCart(product)}
+              >
+                Add to Cart
+              </button>
+            )}
           </div>
         ))}
       </div>

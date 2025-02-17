@@ -20,16 +20,15 @@ const saveCartState = (state) => {
   }
 };
 
-// ✅ Load auth state from localStorage
 const loadAuthState = () => {
   try {
     const authState = localStorage.getItem("auth");
     return authState
       ? JSON.parse(authState)
-      : { isAuthenticated: false, role: "buyer" };
+      : { isAuthenticated: false, role: "buyer", user: null, token: null };
   } catch (err) {
     console.error("Could not load auth state", err);
-    return { isAuthenticated: false, role: "buyer" };
+    return { isAuthenticated: false, role: "buyer", user: null, token: null };
   }
 };
 
@@ -40,7 +39,7 @@ const store = configureStore({
   },
   preloadedState: {
     cart: loadCartState(),
-    auth: loadAuthState(), // ✅ Use the loaded auth state
+    auth: loadAuthState(),
   },
 });
 

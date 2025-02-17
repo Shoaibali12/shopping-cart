@@ -5,10 +5,10 @@ const loadAuthState = () => {
     const authState = localStorage.getItem("auth");
     return authState
       ? JSON.parse(authState)
-      : { isAuthenticated: false, role: "buyer" }; // Default role: buyer
+      : { isAuthenticated: false, role: "buyer", user: null, token: null };
   } catch (err) {
     console.error("Could not load auth state", err);
-    return { isAuthenticated: false, role: "buyer" };
+    return { isAuthenticated: false, role: "buyer", user: null, token: null };
   }
 };
 
@@ -26,12 +26,16 @@ const authSlice = createSlice({
   reducers: {
     login: (state, action) => {
       state.isAuthenticated = true;
-      state.role = action.payload.role; // Store user role
+      state.role = action.payload.role;
+      state.user = action.payload.user; // ✅ Store full user object
+      state.token = action.payload.token;
       saveAuthState(state);
     },
     logout: (state) => {
       state.isAuthenticated = false;
-      state.role = "buyer"; // Reset role to default
+      state.role = "buyer";
+      state.user = null;
+      state.token = null;
       saveAuthState(state);
     },
   },
