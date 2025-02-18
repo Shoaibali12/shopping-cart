@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const authRoutes = require("./routes/authRoute.js");
 const productRoutes = require("./routes/productRoute");
 const path = require("path");
+const cartRoutes = require("./routes/cartRoutes");
 
 dotenv.config();
 const app = express();
@@ -26,7 +27,7 @@ mongoose
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
-
+app.use("/api/cart", cartRoutes);
 // Default route
 app.get("/", (req, res) => {
   res.send("API is running...");
